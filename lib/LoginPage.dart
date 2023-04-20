@@ -17,7 +17,7 @@ class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
   late String _username;
   late String _password;
-
+  String errText = '';
   void login() async {
     var map = new Map<String, dynamic>();
     map['email'] = _username;
@@ -29,6 +29,7 @@ class _LoginPageState extends State<LoginPage> {
     );
     var result = jsonDecode(response.body);
     if (result['status_code'] == 200) {
+      setState(() => errText = "");
       // SharedPreferences localStorage = await SharedPreferences.getInstance();
       // localStorage.setString('data', json.encode(result['data']));
       Navigator.push(
@@ -37,38 +38,7 @@ class _LoginPageState extends State<LoginPage> {
               builder: (context) => ListUserPage(data: result['data'])));
     } else if (result['status_code'] == 401) {
       print(result['status_code']);
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text("Error"),
-            content: Text(style: TextStyle(
-                      fontWeight: FontWeight.bold, color: Colors.red),
-                '${result['message']}'),
-            actions: <Widget>[
-              TextButton(
-                child: Text("OK"),
-                onPressed: () {
-                  _formKey.currentState?.reset();
-                  Navigator.of(context).pop();
-                },
-              ),
-            ],
-          );
-        },
-      );
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          backgroundColor: Colors.white,
-          behavior: SnackBarBehavior.floating,
-          margin: EdgeInsets.only(bottom: 300.0),
-          content: Text(
-            textAlign: TextAlign.center,
-              style: TextStyle(
-                  fontWeight: FontWeight.bold, color: Colors.red),
-              '${result['message']}'),
-        ),
-      );
+      setState(() => errText = result['message']);
     }
   }
 
@@ -97,6 +67,9 @@ class _LoginPageState extends State<LoginPage> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           TextFormField(
+                            onChanged: (value) {
+                              setState(() => errText = "");
+                            },
                             validator: (value) {
                               if (value!.isEmpty) {
                                 return 'Please enter your username';
@@ -111,6 +84,9 @@ class _LoginPageState extends State<LoginPage> {
                             ),
                           ),
                           TextFormField(
+                            onChanged: (value) {
+                              setState(() => errText = "");
+                            },
                             validator: (value) {
                               if (value!.isEmpty) {
                                 return 'Please enter your password';
@@ -154,6 +130,11 @@ class _LoginPageState extends State<LoginPage> {
                           child: Column(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: <Widget>[
+                          Text(
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.red),
+                              errText),
                           Padding(
                             padding: const EdgeInsets.symmetric(vertical: 10.0),
                             child: ConstrainedBox(
