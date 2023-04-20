@@ -59,7 +59,6 @@ class ListUserPageState extends State<ListUserPage> {
 
       if (res.statusCode == 200) {
         var body = jsonDecode(res.body);
-        print(body);
         strName = 'Test Name';
         strPlace = 'Test Place';
         List data = body['data'];
@@ -70,7 +69,6 @@ class ListUserPageState extends State<ListUserPage> {
             content: Text('${jsonDecode(res.body)['message']}'),
           ),
         );
-        print(res.reasonPhrase);
       }
       return [];
     } catch (e) {
@@ -100,29 +98,44 @@ class ListUserPageState extends State<ListUserPage> {
                     children: [
                       Expanded(
                           child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          // Text("Good morning ${models[0].name}"),
-                          Text("${strWish} ${strName}"),
-                          Text("Location : ${strPlace}"),
+                          Padding(
+                              padding: EdgeInsets.all(
+                                  5), //apply padding to all four sides
+                              child: Text("${strWish} ${strName}")),
+                          Padding(
+                              padding: EdgeInsets.all(
+                                  5), //apply padding to all four sides
+                              child: Text("Location : ${strPlace}")),
                         ],
                       )),
                       Expanded(
                           child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text("Your Login Time : $formattedTime "),
-                          Text("Your Active Time: $activeTime  "),
+                          Padding(
+                              padding: EdgeInsets.all(
+                                  5), //apply padding to all four sides
+                              child: Text("Your Login Time : $formattedTime ")),
+                          Padding(
+                              padding: EdgeInsets.all(
+                                  5), //apply padding to all four sides
+                              child: Text("Your Active Time: $activeTime  ")),
                         ],
                       )),
-                      Container(
-                          alignment: Alignment.bottomRight,
-                          width: 150,
-                          height: 150,
-                          margin: const EdgeInsets.fromLTRB(0, 0, 0, 0),
-                          decoration: BoxDecoration(
-                            image: DecorationImage(
-                                image: AssetImage('/images/image1.png'),
-                                fit: BoxFit.contain),
-                          ))
+                      Expanded(
+                          child: Container(
+                              alignment: Alignment.bottomRight,
+                              width: 100,
+                              height: 100,
+                              decoration: BoxDecoration(
+                                image: DecorationImage(
+                                    image: AssetImage('/images/image1.png'),
+                                    fit: BoxFit.contain),
+                              )))
                     ],
                   ),
                 ),
@@ -130,6 +143,8 @@ class ListUserPageState extends State<ListUserPage> {
                   height: 20,
                 ),
                 Text(
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold, color: Colors.blueAccent),
                     "Please select your customer site to proceed your service"),
                 SizedBox(
                   height: 20,

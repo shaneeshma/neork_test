@@ -128,28 +128,42 @@ class _LoginPageState extends State<LoginPage> {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: <Widget>[
                           Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 16.0),
-                            child: ElevatedButton(
-                              onPressed: () async {
-                                if (_formKey.currentState!.validate()) {
-                                  _formKey.currentState!.save();
-                                  login();
-                                }
-                              },
-                              child: Text('Login'),
-                            ),
+                            padding: const EdgeInsets.symmetric(vertical: 10.0),
+                            child: ConstrainedBox(
+                                constraints: BoxConstraints.tightFor(
+                                    width: 300, height: 30),
+                                child: ElevatedButton(
+                                  onPressed: () async {
+                                    if (_formKey.currentState!.validate()) {
+                                      _formKey.currentState!.save();
+                                      login();
+                                    }
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.teal,
+                                    shape: StadiumBorder(),
+                                  ),
+                                  child: Text('Login'),
+                                )),
                           ),
                           Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 16.0),
-                            child: ElevatedButton(
-                              onPressed: () async {
-                                if (_formKey.currentState!.validate()) {
-                                  _formKey.currentState!.save();
-                                  login();
-                                }
-                              },
-                              child: Text('Register'),
-                            ),
+                            padding: const EdgeInsets.symmetric(vertical: 10.0),
+                            child: ConstrainedBox(
+                                constraints: BoxConstraints.tightFor(
+                                    width: 300, height: 30),
+                                child: ElevatedButton(
+                                  onPressed: () async {
+                                    if (_formKey.currentState!.validate()) {
+                                      _formKey.currentState!.save();
+                                      login();
+                                    }
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.teal,
+                                    shape: StadiumBorder(),
+                                  ),
+                                  child: Text('Register'),
+                                )),
                           ),
                         ],
                       )),
