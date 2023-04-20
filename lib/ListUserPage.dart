@@ -65,6 +65,11 @@ class ListUserPageState extends State<ListUserPage> {
         List data = body['data'];
         return data;
       } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('${jsonDecode(res.body)['message']}'),
+          ),
+        );
         print(res.reasonPhrase);
       }
       return [];
