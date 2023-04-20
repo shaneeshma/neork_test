@@ -127,15 +127,24 @@ class ListUserPageState extends State<ListUserPage> {
                         ],
                       )),
                       Expanded(
-                          child: Container(
-                              alignment: Alignment.bottomRight,
-                              width: 100,
-                              height: 100,
-                              decoration: BoxDecoration(
-                                image: DecorationImage(
-                                    image: AssetImage('/images/image1.png'),
-                                    fit: BoxFit.contain),
-                              )))
+                          child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                              padding: EdgeInsets.all(
+                                  5), //apply padding to all four sides
+                              child: Container(
+                                  alignment: Alignment.bottomRight,
+                                  width: 100,
+                                  height: 100,
+                                  decoration: BoxDecoration(
+                                    image: DecorationImage(
+                                        image: AssetImage('/images/image1.png'),
+                                        fit: BoxFit.contain),
+                                  ))),
+                        ],
+                      )),
                     ],
                   ),
                 ),
