@@ -1,6 +1,9 @@
+import 'dart:async';
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'models/DataModel.dart';
+import 'package:intl/intl.dart';
 
 class ListUserPage extends StatefulWidget {
   final data;
@@ -10,38 +13,60 @@ class ListUserPage extends StatefulWidget {
 }
 
 class ListUserPageState extends State<ListUserPage> {
-  Future<List<DataModel>> fetchData() async {
+  String activeTime = '00:00:00';
+  String strWish = '';
+  String strName = '';
+  String strPlace = '';
+  late Timer timer;
+  late DateTime loginTime;
+
+  @override
+  void initState() {
+    super.initState();
+    loginTime = DateTime.now();
+    if (loginTime.hour < 12) {
+      strWish = "Good morning ";
+    } else if (loginTime.hour >= 12 && loginTime.hour < 18) {
+      strWish = "Good afternoon ";
+    } else if (loginTime.hour >= 18) {
+      strWish = "Good evening ";
+    }
+    timer = Timer.periodic(Duration(seconds: 1), (timer) {
+      setState(() {
+        Duration activeDuration = DateTime.now().difference(loginTime);
+        activeTime = activeDuration.toString().split('.').first;
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    timer.cancel();
+    super.dispose();
+  }
+
+  Future<List> fetchData() async {
     try {
       String accessToken = widget.data['access_token'];
       String userId = widget.data['user_id'].toString();
-      print(accessToken);
-      print(userId);
+      var headers = <String, String>{
+        'Content-Type': 'application/json',
+        'accessToken': accessToken,
+        'userId': userId,
+      };
+      final res = await http.get(Uri.parse('http://sas.neork.io/api/customers'),
+          headers: headers);
 
-      // var fullUrl = Uri.parse('http://sas.neork.io/api/customers');
-      // var header = <String, String>{
-      //   'Accept': 'application/json',
-      //   'Content-Type': 'application/x-www-form-urlencoded',
-      //   'X-userId':userId,
-      //   // 'Authorization': 'Bearer $accessToken',
-      //
-      //   'X-accessToken':accessToken
-      // };
-      // final response = await http.get(fullUrl, headers: header);
-
-      var headers = {'userId': '${userId}', 'accessToken': '${accessToken}'};
-      var request =
-          http.Request('GET', Uri.parse('http://sas.neork.io/api/customers'));
-
-      request.headers.addAll(headers);
-
-      http.StreamedResponse response = await request.send();
-
-      if (response.statusCode == 200) {
-        print(await response.stream.bytesToString());
+      if (res.statusCode == 200) {
+        var body = jsonDecode(res.body);
+        print(body);
+        strName = 'Test Name';
+        strPlace = 'Test Place';
+        List data = body['data'];
+        return data;
       } else {
-        print(response.reasonPhrase);
+        print(res.reasonPhrase);
       }
-      print(userId);
       return [];
     } catch (e) {
       print(e);
@@ -51,44 +76,67 @@ class ListUserPageState extends State<ListUserPage> {
 
   @override
   Widget build(BuildContext context) {
+    String formattedTime = DateFormat('h:mm a').format(DateTime.now());
+
     return Scaffold(
         body: FutureBuilder(
       future: fetchData(),
-      builder: (context, AsyncSnapshot<List<DataModel>> snapshot) {
+      builder: (context, AsyncSnapshot<List> snapshot) {
         if (snapshot.hasData) {
-          List<DataModel> models = snapshot.data!;
+          List models = snapshot.data!;
           return Container(
             height: MediaQuery.of(context).size.height,
             child: Column(
               children: [
                 Container(
-                  child: Column(
+                  height: 200,
+                  width: MediaQuery.of(context).size.width,
+                  child: Row(
                     children: [
-                      Row(
+                      Expanded(
+                          child: Column(
                         children: [
                           // Text("Good morning ${models[0].name}"),
-                          Expanded(child: Text("Good morning ")),
-                          Expanded(
-                              child: Text(
-                                  "Your Login Time : ${widget.data['login_date_time']}")),
+                          Text("${strWish} ${strName}"),
+                          Text("Location : ${strPlace}"),
                         ],
-                      ),
-                      Row(
+                      )),
+                      Expanded(
+                          child: Column(
                         children: [
-                          Expanded(child: Text("Location")),
-                          Expanded(child: Text("Your Active Time:")),
+                          Text("Your Login Time : $formattedTime "),
+                          Text("Your Active Time: $activeTime  "),
                         ],
-                      ),
+                      )),
+                      Container(
+                          alignment: Alignment.bottomRight,
+                          width: 150,
+                          height: 150,
+                          margin: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+                          decoration: BoxDecoration(
+                            image: DecorationImage(
+                                image: AssetImage('/images/image1.png'),
+                                fit: BoxFit.contain),
+                          ))
                     ],
                   ),
+                ),
+                SizedBox(
+                  height: 20,
+                ),
+                Text(
+                    "Please select your customer site to proceed your service"),
+                SizedBox(
+                  height: 20,
                 ),
                 ListView.builder(
                     itemCount: models.length,
                     shrinkWrap: true,
                     itemBuilder: (context, index) => Card(
-                            child: ListTile(
-                          title: Text(models[index].name!),
-                          subtitle: Text(models[index].site_address!),
+                        color: (index % 2 == 0) ? Colors.white38 : Colors.grey,
+                        child: ListTile(
+                          title: Text(models[index]['name']),
+                          subtitle: Text(models[index]['site_address']!),
                         )))
               ],
             ),
