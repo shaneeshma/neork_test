@@ -37,9 +37,36 @@ class _LoginPageState extends State<LoginPage> {
               builder: (context) => ListUserPage(data: result['data'])));
     } else if (result['status_code'] == 401) {
       print(result['status_code']);
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text("Error"),
+            content: Text(style: TextStyle(
+                      fontWeight: FontWeight.bold, color: Colors.red),
+                '${result['message']}'),
+            actions: <Widget>[
+              TextButton(
+                child: Text("OK"),
+                onPressed: () {
+                  _formKey.currentState?.reset();
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        },
+      );
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('${result['message']}'),
+          backgroundColor: Colors.white,
+          behavior: SnackBarBehavior.floating,
+          margin: EdgeInsets.only(bottom: 300.0),
+          content: Text(
+            textAlign: TextAlign.center,
+              style: TextStyle(
+                  fontWeight: FontWeight.bold, color: Colors.red),
+              '${result['message']}'),
         ),
       );
     }
